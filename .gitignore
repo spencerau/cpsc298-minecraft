@@ -25,6 +25,8 @@ replay_pid*
 
 .gradle/
 .vscode/
+.venv/
+.github/
 build/
 gradle/
 runs/

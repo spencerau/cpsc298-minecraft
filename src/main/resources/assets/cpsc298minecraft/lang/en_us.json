@@ -9,6 +9,10 @@
   "cpsc298minecraft.configuration.items": "Item List",
   "cpsc298minecraft.configuration.logDirtBlock": "Log Dirt Block",
   "cpsc298minecraft.configuration.magicNumberIntroduction": "Magic Number Text",
-  "cpsc298minecraft.configuration.magicNumber": "Magic Number"
+  "cpsc298minecraft.configuration.magicNumber": "Magic Number",
+
+  "item.cpsc298minecraft.transmutation_wand_handle": "Transmutation Wand Handle",
+  "item.cpsc298minecraft.transmutation_wand_head": "Transmutation Wand Head",
+  "item.cpsc298minecraft.transmutation_wand": "Transmutation Wand"
 }
 

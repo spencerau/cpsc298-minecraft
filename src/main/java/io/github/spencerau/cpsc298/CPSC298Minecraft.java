@@ -7,12 +7,17 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -67,14 +72,13 @@ public class CPSC298Minecraft {
     public static final DeferredBlock<Block> lol_block = BLOCKS.register(
         "lol_block", 
         registryName -> new Block(BlockBehaviour.Properties.of()
-            .strength(999f, 3000000f) // hardness and explosive resistance
-            // .destroyTime(999f)
-            // .explosionResistance(3000000f)
-            //.sound(SoundType.GRAVEL)
+            //.strength(999f, 3000000f) // hardness and explosive resistance
+            .speedFactor(2f) 
             .lightLevel(state -> 15)
             .friction(0.99f)
             .setId(ResourceKey.create(Registries.BLOCK, registryName))
-        ));
+        )
+    );
     // block item for lol block in inventory
     public static final DeferredItem<BlockItem> lol_block_item = 
         ITEMS.registerSimpleBlockItem("lol_block", lol_block);
@@ -88,13 +92,121 @@ public class CPSC298Minecraft {
             // .destroyTime(999f)
             // .explosionResistance(3000000f)
             //.sound(SoundType.GRAVEL)
+            .jumpFactor(3f)
             .lightLevel(state -> 15)
             .friction(0.99f)
             .setId(ResourceKey.create(Registries.BLOCK, registryName))
-        ));
+        )
+    );
     // block item for cheese block in inventory
     public static final DeferredItem<BlockItem> cheese_block_item = 
         ITEMS.registerSimpleBlockItem("cheese_block", cheese_block);
+
+    // trampoline block
+    public static final DeferredBlock<Block> trampoline_block = BLOCKS.register(
+        "trampoline_block",
+        registryName -> new Block(BlockBehaviour.Properties.of()
+            .jumpFactor(2.5f)
+            .lightLevel(state -> 15)
+            .friction(0.99f)
+            .setId(ResourceKey.create(Registries.BLOCK, registryName))
+        )
+    );
+    // block item for trampoline block in inventory
+    public static final DeferredItem<BlockItem> trampoline_block_item = 
+        ITEMS.registerSimpleBlockItem("trampoline_block", trampoline_block);
+
+    public static final DeferredBlock<Block> CORGI_DISPENSER_BLOCK = BLOCKS.registerSimpleBlock("corgi_dispenser_block",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.0f, 6.0f) // Hardness, Resistance
+                    .requiresCorrectToolForDrops() // Requires pickaxe
+                    .lightLevel(state -> 10) // Emits light level 10
+                    .sound(net.minecraft.world.level.block.SoundType.STONE) // Stone sound when stepped on or broken
+    );
+
+    public static final DeferredItem<BlockItem> CORGI_DISPENSER_BLOCK_ITEM =
+        ITEMS.registerSimpleBlockItem("corgi_dispenser_block", CORGI_DISPENSER_BLOCK);
+
+    // boom block
+    public static final DeferredBlock<Block> BOOM_BLOCK = BLOCKS.register(
+        "boom_block",
+        registryName -> new BoomBlock(BlockBehaviour.Properties.of()
+            .strength(1f, 30f) // hardness and explosive resistance
+            .speedFactor(2f)
+            .setId(ResourceKey.create(Registries.BLOCK, registryName))
+        )
+    );
+    public static final DeferredItem<BlockItem> BOOM_BLOCK_ITEM =
+        ITEMS.registerSimpleBlockItem("boom_block", BOOM_BLOCK);
+
+    // GOD TIER Material
+    public static final ToolMaterial GOD_TIER = new ToolMaterial(
+            BlockTags.INCORRECT_FOR_NETHERITE_TOOL, // Least restrictive (or define your own)
+            9999,   // durability
+            100.0F, // speed
+            25.0F,  // attack bonus
+            30,     // enchantability
+            ItemTags.PLANKS // Repairable with wood planks (for fun)
+    );
+    // OP Pickaxe Item
+    public static final DeferredItem<Item> OP_PICKAXE = ITEMS.register(
+        "op_pickaxe", 
+        registryName -> new Item(new Item.Properties()
+            .setId(ResourceKey.create(Registries.ITEM, registryName))
+            .durability(9999)
+            .pickaxe(
+                GOD_TIER,
+                99.0F,   // Attack Damage
+                1.6F     // Attack Speed
+            )
+        )
+    );
+
+    // cheese item
+    public static final DeferredItem<Item> CHEESE_ITEM =ITEMS.register(
+        "cheese",
+        registryName -> new CheeseItem(new Item.Properties()
+            .setId(ResourceKey.create(Registries.ITEM, registryName))
+            .food(new FoodProperties.Builder()
+                .nutrition(4)
+                .saturationModifier(0.5f)
+                .alwaysEdible()
+                .build()
+            )   
+        )
+    );
+
+    public static final DeferredItem<Item> TRANSMUTATION_WAND_HANDLE = ITEMS.register(
+        "transmutation_wand_handle", 
+        registryName -> new Item(new Item.Properties()
+            .setId(ResourceKey.create(Registries.ITEM, registryName))
+        )
+    );
+
+    public static final DeferredItem<Item> TRANSMUTATION_WAND_HEAD = ITEMS.register(
+        "transmutation_wand_head", 
+        registryName -> new Item(new Item.Properties()
+            .setId(ResourceKey.create(Registries.ITEM, registryName))
+        )
+    );
+
+    public static final DeferredItem<Item> TRANSMUTATION_WAND = ITEMS.register(
+        "transmutation_wand", 
+        registryName -> new Item(new Item.Properties()
+            .setId(ResourceKey.create(Registries.ITEM, registryName))
+        )
+    );
+
+    // sounds
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(
+        Registries.SOUND_EVENT, "cpsc298minecraft");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORGI_BARK = SOUNDS.register(
+        "corgi_bark", () -> SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath("cpsc298minecraft", "corgi_bark"))
+    );
+    
 
     // register to creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CUSTOM_ITEMS_TAB = 
@@ -105,6 +217,14 @@ public class CPSC298Minecraft {
         .displayItems((parameters, output) -> {
             output.accept(lol_block_item.get()); // Add the lol block item to the tab
             output.accept(cheese_block_item.get()); // Add the cheese block item to the tab
+            output.accept(trampoline_block_item.get()); // Add the trampoline block item to the tab
+            output.accept(CORGI_DISPENSER_BLOCK_ITEM.get()); // Add the corgi dispenser block item to the tab
+            output.accept(BOOM_BLOCK_ITEM.get()); // Add the boom block item to the tab
+            output.accept(OP_PICKAXE.get()); 
+            output.accept(CHEESE_ITEM.get());
+            output.accept(TRANSMUTATION_WAND.get());
+            output.accept(TRANSMUTATION_WAND_HANDLE.get());
+            output.accept(TRANSMUTATION_WAND_HEAD.get());
         }).build());
 
 
@@ -114,10 +234,18 @@ public class CPSC298Minecraft {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+        NeoForge.EVENT_BUS.register(BlockDropHandler.class);
+
+        // Register the PlayerInteractions class to listen for player interaction events
+        NeoForge.EVENT_BUS.register(PlayerInteractions.class);
+
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
+        // Register the Deferred Register to the mod event bus so sounds get registered
+        SOUNDS.register(modEventBus);
+
         // Add a log line that prints when your item is registered
         LOGGER.info("Add a log line that prints when your item is registered");
         // Register the Deferred Register to the mod event bus so tabs get registered
@@ -158,6 +286,11 @@ public class CPSC298Minecraft {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(lol_block_item.get());
             event.accept(cheese_block_item.get());
+            event.accept(trampoline_block_item.get());
+            event.accept(CORGI_DISPENSER_BLOCK_ITEM.get());
+            event.accept(BOOM_BLOCK_ITEM.get());
+            event.accept(OP_PICKAXE.get());
+            event.accept(CHEESE_ITEM.get());
         }
     }
 

@@ -1,0 +1,17 @@
+package io.github.spencerau.cpsc298.datagen;
+
+import net.minecraft.data.PackOutput;
+import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
+public class {{ name.title() }}ModelProvider extends BlockModelProvider {
+    public {{ name.title() }}ModelProvider(PackOutput output, ExistingFileHelper helper) {
+        super(output, "{{ modid }}", helper);
+    }
+
+    @Override
+    protected void registerModels() {
+        getBuilder("{{ name }}")
+            .texture("all", modLoc("block/{{ name }}"));
+    }
+}

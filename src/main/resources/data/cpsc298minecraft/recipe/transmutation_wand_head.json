@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#G#",
+        "GPG",
+        "#G#"
+    ],
+    "key": {
+        "#": "minecraft:string",
+        "G": "minecraft:glowstone",
+        "P": "minecraft:piglin_head"
+    },
+    "result": {
+    "id": "cpsc298minecraft:transmutation_wand_head",
+    "count": 1
+  },
+  "show_notification": true
+}
