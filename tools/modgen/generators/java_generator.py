@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Optional
 from jinja2 import Environment, FileSystemLoader
-from ..utils import write_file, to_camel_case
+import utils
 
 
 class JavaGenerator:
@@ -10,7 +10,8 @@ class JavaGenerator:
         self.project_root = project_root
         self.base_package = base_package
         self.modid = modid
-        self.java_src = project_root / "src/main/java" / base_package.replace('.', '/')
+        # Write generated Java into src/generated/java so it's separate from handwritten sources
+        self.java_src = project_root / "src/generated/java" / base_package.replace('.', '/')
         self.generated_pkg = f"{base_package}.generated"
         self.custom_pkg = f"{base_package}.custom"
         
@@ -28,7 +29,7 @@ class JavaGenerator:
         self.generate_blocks_class(blocks)
         self.generate_registries_class(items, blocks)
         self.generate_creative_tabs_class(creative_tab, items, blocks)
-        self.generate_custom_stubs(blocks)
+        self.generate_custom_stubs(items, blocks)
     
     def generate_items_class(self, items: List[Dict]):
         template = self.env.get_template('GeneratedItems.java.j2')
@@ -39,7 +40,7 @@ class JavaGenerator:
                 'id': item['id'],
                 'var_name': item['id'].upper(),
                 'props': self._build_item_properties(item),
-                'custom_class': to_camel_case(item['id']) + "Item" if item.get('custom_class') else None
+                'custom_class': utils.to_camel_case(item['id']) + "Item" if item.get('custom_class') else None
             }
             items_data.append(item_data)
         
@@ -52,7 +53,7 @@ class JavaGenerator:
         )
         
         path = self.java_src / "generated" / "GeneratedItems.java"
-        write_file(path, code)
+        utils.write_file(path, code)
     
     def generate_blocks_class(self, blocks: List[Dict]):
         template = self.env.get_template('GeneratedBlocks.java.j2')
@@ -66,7 +67,7 @@ class JavaGenerator:
                 'id': block['id'],
                 'var_name': block['id'].upper(),
                 'props': self._build_block_properties(block),
-                'custom_class': to_camel_case(block['id']) + "Block" if custom else None
+                'custom_class': utils.to_camel_case(block['id']) + "Block" if custom else None
             }
             blocks_data.append(block_data)
         
@@ -79,7 +80,7 @@ class JavaGenerator:
         )
         
         path = self.java_src / "generated" / "GeneratedBlocks.java"
-        write_file(path, code)
+        utils.write_file(path, code)
     
     def generate_registries_class(self, items: List[Dict], blocks: List[Dict]):
         template = self.env.get_template('GeneratedRegistries.java.j2')
@@ -89,7 +90,7 @@ class JavaGenerator:
         )
         
         path = self.java_src / "generated" / "GeneratedRegistries.java"
-        write_file(path, code)
+        utils.write_file(path, code)
     
     def generate_creative_tabs_class(self, creative_tab: Optional[Dict], items: List[Dict], blocks: List[Dict]):
         template = self.env.get_template('GeneratedCreativeTabs.java.j2')
@@ -108,20 +109,42 @@ class JavaGenerator:
         for block in blocks:
             item_additions.append(f"GeneratedBlocks.{block['id'].upper()}_ITEM")
         
+        icon_id = creative_tab.get('icon', items[0]['id'] if items else blocks[0]['id'])
+        icon_is_block = any(b['id'] == icon_id for b in blocks)
+        icon_ref = f"GeneratedBlocks.{icon_id.upper()}" if icon_is_block else f"GeneratedItems.{icon_id.upper()}"
+        
         code = template.render(
             package=self.generated_pkg,
             base_package=self.base_package,
             modid=self.modid,
             mod_class=self.modid.upper().replace('MINECRAFT', 'Minecraft'),
             tab_id=creative_tab['id'],
-            icon_item=creative_tab.get('icon', items[0]['id'] if items else blocks[0]['id']).upper(),
+            icon_item=icon_ref,
             item_additions=item_additions
         )
         
         path = self.java_src / "generated" / "GeneratedCreativeTabs.java"
-        write_file(path, code)
+        utils.write_file(path, code)
     
-    def generate_custom_stubs(self, blocks: List[Dict]):
+    def generate_custom_stubs(self, items: List[Dict], blocks: List[Dict]):
+        for item in items:
+            if not item.get('custom_class'):
+                continue
+            
+            template = self.env.get_template('CustomItem.java.j2')
+            
+            item_id = item['id']
+            class_name = utils.to_camel_case(item_id) + "Item"
+            
+            code = template.render(
+                package=self.custom_pkg,
+                class_name=class_name,
+                item_id=item_id
+            )
+            
+            path = self.java_src / "custom" / f"{class_name}.java"
+            utils.write_file(path, code, overwrite=False)
+        
         for block in blocks:
             behavior = block.get('behavior')
             if not behavior and not block.get('custom_class'):
@@ -130,7 +153,7 @@ class JavaGenerator:
             template = self.env.get_template('CustomBlock.java.j2')
             
             block_id = block['id']
-            class_name = to_camel_case(block_id) + "Block"
+            class_name = utils.to_camel_case(block_id) + "Block"
             
             behavior_methods = []
             if behavior and 'bounce_strength' in behavior:
@@ -151,7 +174,7 @@ class JavaGenerator:
             )
             
             path = self.java_src / "custom" / f"{class_name}.java"
-            write_file(path, code, overwrite=False)
+            utils.write_file(path, code, overwrite=False)
     
     def _build_item_properties(self, item: Dict) -> str:
         props = []

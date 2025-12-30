@@ -20,10 +20,10 @@ public class GeneratedCreativeTabs {
         "{{ tab_id }}",
         () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.{{ modid }}.{{ tab_id }}"))
-            .icon(() -> new ItemStack(GeneratedItems.{{ icon_item }}.get()))
+            .icon(() -> new ItemStack({{ icon_item }}.get()))
             .displayItems((parameters, output) -> {
 {% for item_ref in item_additions %}
-                output.accept({{ item_ref }});
+                output.accept({{ item_ref }}.get());
 {% endfor %}
             })
             .build()

@@ -32,6 +32,7 @@ gradle/
 runs/
 bin/
 .DS_Store
+run
 
 __pycache__
 

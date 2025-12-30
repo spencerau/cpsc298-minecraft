@@ -11,8 +11,10 @@ pip install -r tools/modgen/requirements.txt
 
 ### 2. Add Textures & Sounds
 Place your files in:
-- `assets/textures/*.png` - Item and block textures
-- `assets/sounds/*.ogg` - Sound files
+- `assets/textures/block/*.png` - block textures
+- `assets/textures/entity/*.png` - entity textures
+- `assets/textures/item/*.png` - item textures
+- `assets/sounds/*.ogg` - sound files
 
 ### 3. Edit Content Spec
 Edit `tools/modgen/content.yaml`:
@@ -37,31 +39,35 @@ blocks:
 ```
 
 ### 5. One-Time Java Integration
-Add this ONE line to your mod constructor in `src/main/java/io/github/spencerau/cpsc298/CPSC298Minecraft.java`:
+Add this ONE line to your ModID constructor in `CPSC298Minecraft.java`:
 
 ```java
 @Mod(CPSC298Minecraft.MODID)
 public class CPSC298Minecraft {
-    public static final String MODID = "cpsc298minecraft";
 
     public CPSC298Minecraft(IEventBus modEventBus, ModContainer modContainer) {
-        // ADD THIS:
-        io.github.spencerau.cpsc298.generated.GeneratedRegistries.init();
-        
-        // ... rest of existing code ...
+        // ... prior deferred register calls
+
+        // Register the Deferred Register to the mod event bus so tabs get registered
+        CREATIVE_MODE_TABS.register(modEventBus);
+
+        // Load generated content classes after DeferredRegisters are attached
+        GeneratedItems.init();
+        GeneratedBlocks.init();
+        GeneratedCreativeTabs.init();
+
+        // other code ...
     }
 }
 ```
 
 ### 6. Build & Test
 ```bash
-./gradlew build
-./gradlew runClient
+./gradlew runClientWithGen
 ```
 
 ## What Gets Generated
 
-Running `./gradlew genContent` creates:
 - Java classes in `src/main/java/.../generated/` (don't edit these)
 - Custom stubs in `src/main/java/.../custom/` (edit these for behavior)
 - JSON assets (models, blockstates, lang)

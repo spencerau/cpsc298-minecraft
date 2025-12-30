@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 from typing import Dict, List
-from ..utils import ensure_dir
+import utils
 
 
 class AssetManager:
@@ -13,14 +13,14 @@ class AssetManager:
         self.target_assets = project_root / "src/main/resources/assets" / modid
         
     def copy_textures(self, items: List[Dict], blocks: List[Dict]):
-        print("\n📦 Copying textures...")
+        print("\nCopying textures...")
         
         for item in items:
-            texture = item.get('texture', f"{item['id']}.png")
+            texture = item.get('texture', item['id'])
             if not texture.endswith('.png'):
                 texture += '.png'
             
-            src = self.source_assets / "textures" / texture
+            src = self.source_assets / "textures/item" / texture
             dest = self.target_assets / "textures/item" / texture
             self._copy_asset(src, dest)
         
@@ -33,12 +33,15 @@ class AssetManager:
                 if not tex_file.endswith('.png'):
                     tex_file += '.png'
                 
-                src = self.source_assets / "textures" / tex_file
+                src = self.source_assets / "textures/block" / tex_file
                 dest = self.target_assets / "textures/block" / tex_file
                 self._copy_asset(src, dest)
+                # Also copy a copy to the item textures folder so inventory sprites exist
+                item_dest = self.target_assets / "textures/item" / tex_file
+                self._copy_asset(src, item_dest)
     
     def copy_sounds(self, items: List[Dict], blocks: List[Dict]):
-        print("\n🔊 Copying sounds...")
+        print("\nCopying sounds...")
         
         sound_refs = set()
         
@@ -61,6 +64,6 @@ class AssetManager:
             print(f"  [WARN] Source not found: {src}")
             return
         
-        ensure_dir(dest.parent)
+        utils.ensure_dir(dest.parent)
         shutil.copy2(src, dest)
         print(f"  [COPY] {src.name} → {dest.relative_to(self.project_root)}")

@@ -15,6 +15,9 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import {{ base_package }}.{{ mod_class }};
+{% for block in blocks %}{% if block.custom_class %}
+import {{ base_package }}.custom.{{ block.custom_class }};
+{% endif %}{% endfor %}
 
 public class GeneratedBlocks {
     private static final DeferredRegister.Blocks BLOCKS = {{ mod_class }}.BLOCKS;

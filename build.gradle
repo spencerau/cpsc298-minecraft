@@ -1,7 +1,8 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.190'
+    id 'net.neoforged.moddev' version '2.0.134'
+    id 'idea'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -27,61 +28,82 @@ base {
 // Mojang ships Java 21 to end users in 1.21.8, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-//minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
-//minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = project.neo_version
 
-// Default run configurations.
-// These can be tweaked, removed, or duplicated as needed.
-runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        modSource project.sourceSets.main
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
     }
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    // This line is optional. Access Transformers are automatically detected
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            client()
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            clientData()
+
+            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+            // gameDirectory = project.file('run-data')
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        // applies to all the run configs above
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
     }
 
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        argument '--nogui'
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // multi mod projects should define one per mod
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
-
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    clientData {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
-
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-
-    // single {
-    //     systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    // }
 }
 
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+// Include generated Java sources
+sourceSets.main.java.srcDir 'src/generated/java'
 
 // Sets up a dependency configuration called 'localRuntime'.
 // This configuration should be used instead of 'runtimeOnly' to declare
@@ -92,14 +114,6 @@ configurations {
 }
 
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
-    // The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.
-    // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
-    // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
-    // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
-    implementation "net.neoforged:neoforge:${neo_version}"
-
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -125,9 +139,7 @@ dependencies {
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
-// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
-// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
-tasks.withType(ProcessResources).configureEach {
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
@@ -136,15 +148,17 @@ tasks.withType(ProcessResources).configureEach {
             mod_name               : mod_name,
             mod_license            : mod_license,
             mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description
     ]
     inputs.properties replaceProperties
-
-    filesMatching(['META-INF/neoforge.mods.toml']) {
-        expand replaceProperties
-    }
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
 }
+// Include the output of "generateModMetadata" as an input directory for the build
+// this works with both building through Gradle and the IDE.
+sourceSets.main.resources.srcDir generateModMetadata
+// To avoid having to run "generateModMetadata" manually, make it run on every project reload
+neoForge.ideSyncTask generateModMetadata
 
 // Example configuration to allow publishing using the maven-publish plugin
 publishing {
@@ -164,28 +178,14 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-}
-
-// ============================================================================
-// Content Generation Task
-// ============================================================================
 task genContent(type: Exec) {
-    group = 'mod generation'
     description = 'Generates mod content (Java, JSON, assets) from content.yaml specification'
     
-    // Run the Python generator script
-    commandLine 'python3', 'tools/modgen/modgen.py'
+    def pythonCmd = file('.venv/bin/python').exists() ? '.venv/bin/python' : 'python3'
+    commandLine pythonCmd, 'tools/modgen/modgen.py'
     
-    // Set working directory to project root
     workingDir projectDir
     
-    // Inputs and outputs for up-to-date checking
     inputs.file('tools/modgen/content.yaml')
     inputs.file('tools/modgen/modgen.py')
     inputs.dir('assets/textures').optional(true)
@@ -196,13 +196,65 @@ task genContent(type: Exec) {
     outputs.dir('src/main/resources/data/cpsc298minecraft')
     
     doFirst {
-        println '🚀 Running content generator...'
+        println 'Running content generator...'
     }
     
     doLast {
-        println '✅ Content generation complete!'
+        println 'Content generation complete!'
     }
 }
 
-// Make compileJava depend on genContent (optional - comment out if you prefer manual execution)
-// compileJava.dependsOn genContent
+// Run the generator as a separate task (invokes tools/modgen as a module)
+task modgen(type: Exec) {
+    description = 'Runs the mod content generator (tools/modgen)'
+    def pythonCmd = file('.venv/bin/python').exists() ? '.venv/bin/python' : 'python3'
+    commandLine pythonCmd, '-m', 'tools.modgen'
+    workingDir projectDir
+    inputs.file('tools/modgen/content.yaml')
+    outputs.dir('src/generated/java')
+    outputs.dir('src/main/resources/assets/' + project.mod_id)
+    doFirst { println 'Running modgen...' }
+}
+
+// Make compilation and resource processing depend on generated code
+tasks.named('compileJava').configure { dependsOn modgen }
+tasks.named('processResources').configure { dependsOn modgen }
+tasks.register('runClientWithGen') {
+    // Run the content generator and then launch the client. The generator itself
+    // now depends on `cleanContent` so generated outputs are cleaned first.
+    dependsOn modgen
+    dependsOn tasks.named('runClient')
+}
+
+// Ensure the generator runs after cleaning generated content so outputs exist
+// for compilation and packaging.
+
+task cleanContent(type: Exec) {
+    description = 'Removes all generated mod content (Java, JSON, assets)'
+    
+    def pythonCmd = file('.venv/bin/python').exists() ? '.venv/bin/python' : 'python3'
+    commandLine pythonCmd, 'tools/modgen/clean_mods.py'
+    
+    workingDir projectDir
+    
+    doFirst {
+        println 'Cleaning generated content...'
+    }
+    
+    doLast {
+        println 'Clean complete!'
+    }
+}
+
+// Configure generator to run after cleanContent (defined above)
+tasks.named('modgen') {
+    dependsOn tasks.named('cleanContent')
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

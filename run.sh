@@ -1,6 +1,4 @@
-# ./gradlew --stop
-# ./gradlew clean
-# rm -rf .gradle build
-# rm -rf build
-./gradlew build
-./gradlew runClient
+#!/usr/bin/env bash
+# Run the content generator and launch the client in one step.
+# Uses the Gradle task `runClientWithGen` which depends on the generator.
+./gradlew runClientWithGen

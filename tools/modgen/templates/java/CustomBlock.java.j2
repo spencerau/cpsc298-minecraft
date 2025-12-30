@@ -16,8 +16,7 @@ public class {{ class_name }} extends Block {
 {% if behavior_methods %}
 {% for method in behavior_methods %}
 {% if method.name == 'stepOn' %}
-    
-    @Override
+
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (entity instanceof LivingEntity && entity.getDeltaMovement().y < 0) {
             entity.setDeltaMovement(entity.getDeltaMovement().x, {{ method.bounce_strength }}, entity.getDeltaMovement().z);
@@ -25,15 +24,14 @@ public class {{ class_name }} extends Block {
         super.stepOn(level, pos, state, entity);
     }
 {% elif method.name == 'fallOn' %}
-    
-    @Override
+
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         entity.causeFallDamage(fallDistance, {{ method.fall_damage_multiplier }}f, level.damageSources().fall());
     }
 {% endif %}
 {% endfor %}
 {% else %}
-    
+
     // TODO: Implement custom block behavior here
 {% endif %}
 }

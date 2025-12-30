@@ -1,6 +1,0 @@
-﻿{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "cpsc298minecraft:item/op_pickaxe"
-  }
-}

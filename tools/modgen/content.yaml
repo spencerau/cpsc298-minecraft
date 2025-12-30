@@ -56,7 +56,10 @@ blocks:
       all: trampoline_block
     hardness: 1.0
     resistance: 2.0
-    light_level: 15
+    light_level: 0
+    behavior:
+      bounce_strength: 1.3
+      fall_damage_multiplier: 0.3
     drops: self
 
   - id: corgi_dispenser_block

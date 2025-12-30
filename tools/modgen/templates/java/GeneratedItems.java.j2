@@ -11,13 +11,16 @@ import net.minecraft.world.food.FoodProperties;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import {{ base_package }}.{{ mod_class }};
+{% for item in items %}{% if item.custom_class %}
+import {{ base_package }}.custom.{{ item.custom_class }};
+{% endif %}{% endfor %}
 
 public class GeneratedItems {
     private static final DeferredRegister.Items ITEMS = {{ mod_class }}.ITEMS;
     
 {% for item in items %}
 {% if item.custom_class %}
-    public static final DeferredItem<{{ item.custom_class }}> {{ item.var_name }} = ITEMS.register("{{ item.id }}", () -> new {{ item.custom_class }}({{ item.props }}));
+    public static final DeferredItem<{{ item.custom_class }}> {{ item.var_name }} = ITEMS.registerItem("{{ item.id }}", {{ item.custom_class }}::new, {{ item.props }});
 {% else %}
     public static final DeferredItem<Item> {{ item.var_name }} = ITEMS.registerSimpleItem("{{ item.id }}", {{ item.props }});
 {% endif %}
