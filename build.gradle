@@ -171,3 +171,38 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// ============================================================================
+// Content Generation Task
+// ============================================================================
+task genContent(type: Exec) {
+    group = 'mod generation'
+    description = 'Generates mod content (Java, JSON, assets) from content.yaml specification'
+    
+    // Run the Python generator script
+    commandLine 'python3', 'tools/modgen/modgen.py'
+    
+    // Set working directory to project root
+    workingDir projectDir
+    
+    // Inputs and outputs for up-to-date checking
+    inputs.file('tools/modgen/content.yaml')
+    inputs.file('tools/modgen/modgen.py')
+    inputs.dir('assets/textures').optional(true)
+    inputs.dir('assets/sounds').optional(true)
+    
+    outputs.dir('src/main/java/io/github/spencerau/cpsc298/generated')
+    outputs.dir('src/main/resources/assets/cpsc298minecraft')
+    outputs.dir('src/main/resources/data/cpsc298minecraft')
+    
+    doFirst {
+        println '🚀 Running content generator...'
+    }
+    
+    doLast {
+        println '✅ Content generation complete!'
+    }
+}
+
+// Make compileJava depend on genContent (optional - comment out if you prefer manual execution)
+// compileJava.dependsOn genContent

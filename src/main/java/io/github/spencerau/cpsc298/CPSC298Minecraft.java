@@ -22,12 +22,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -198,6 +200,15 @@ public class CPSC298Minecraft {
         )
     );
 
+    public static final DeferredItem<Item> CORGI_SPAWN_EGG =
+        ITEMS.register("corgi_spawn_egg", (registryName) ->
+                new net.minecraft.world.item.SpawnEggItem(
+                        ModEntities.CORGI.get(),
+                        new Item.Properties().setId(
+                                net.minecraft.resources.ResourceKey.create(
+                                        net.minecraft.core.registries.Registries.ITEM, registryName)))
+        );
+
     // sounds
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(
         Registries.SOUND_EVENT, "cpsc298minecraft");
@@ -225,6 +236,7 @@ public class CPSC298Minecraft {
             output.accept(TRANSMUTATION_WAND.get());
             output.accept(TRANSMUTATION_WAND_HANDLE.get());
             output.accept(TRANSMUTATION_WAND_HEAD.get());
+            output.accept(CORGI_SPAWN_EGG.get());
         }).build());
 
 
@@ -243,6 +255,8 @@ public class CPSC298Minecraft {
         BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
+        // Register the entity types
+        ModEntities.register(modEventBus);
         // Register the Deferred Register to the mod event bus so sounds get registered
         SOUNDS.register(modEventBus);
 
@@ -261,6 +275,10 @@ public class CPSC298Minecraft {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            NeoForge.EVENT_BUS.register(CPSC298MinecraftClient.class);
+        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -291,6 +309,7 @@ public class CPSC298Minecraft {
             event.accept(BOOM_BLOCK_ITEM.get());
             event.accept(OP_PICKAXE.get());
             event.accept(CHEESE_ITEM.get());
+            event.accept(CORGI_SPAWN_EGG.get());
         }
     }
 

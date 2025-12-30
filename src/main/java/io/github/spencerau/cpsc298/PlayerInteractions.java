@@ -1,5 +1,7 @@
 package io.github.spencerau.cpsc298;
 
+// import io.github.spencerau.cpsc298.CorgiEntity;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -8,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
 
 public class PlayerInteractions {
 
@@ -86,6 +90,41 @@ public class PlayerInteractions {
                         false
                 );
             }
+            // Spawn a Corgi just above the block (server-side)
+                if (world instanceof ServerLevel server) {
+                    var corgi = ModEntities.CORGI.get().create(server, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+                    if (corgi != null) {
+                        // position
+                        var p = Vec3.atBottomCenterOf(pos).add(0.0, 1.0, 0.0);
+                        corgi.setPos(p);                      // set x/y/z
+
+                        // face the player (yaw) and keep pitch flat
+                        corgi.setYRot(player.getYRot());
+                        corgi.setXRot(0.0F);
+
+                        // sync body/head rotation so it looks the way it's facing
+                        if (corgi instanceof net.minecraft.world.entity.LivingEntity living) {
+                            living.setYBodyRot(corgi.getYRot());
+                            living.setYHeadRot(corgi.getYRot());
+                        }
+
+                        // don't let us die
+                        corgi.setPersistenceRequired();
+
+                        // custom name
+                        RandomSource random = world.getRandom();
+                        String name = random.nextBoolean() ? "Sandie" : "Nova";
+                        corgi.setCustomName(Component.literal(name));
+
+                        // auto-tame and start off not sitting
+                        if (corgi instanceof net.minecraft.world.entity.animal.wolf.Wolf wolf) {
+                            wolf.tame(player);
+                            wolf.setOrderedToSit(false);
+                        }
+
+                        server.addFreshEntity(corgi);
+                    }
+                }
 
             // // Play the sound
             // world.playSound(null, pos,

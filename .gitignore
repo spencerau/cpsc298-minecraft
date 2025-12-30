@@ -33,3 +33,5 @@ runs/
 bin/
 .DS_Store
 
+__pycache__
+
