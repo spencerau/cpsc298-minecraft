@@ -4,12 +4,20 @@
 
 TODO (prob brew or whatever the windows non cli equivalent is)
 
-## Installing IntelliJ
+## Installing IntelliJ IDEA
 
-- Click on [this link](https://www.jetbrains.com/idea/download/) to install IntelliJ. The JetBrains site will autodetect which OS your computer is running:
-    - Windows (x86-64)
+- Click on [this link](https://www.jetbrains.com/idea/download/) to install IntelliJ. Download the appropriate installer for your device:
+  
+
+  - Windows: exe installer
+
+  - MacOS: dmg installer
+  <br>
+
+<!-- The JetBrains site will autodetect which OS your computer is running:
+  - Windows (x86-64)
 	- macOS (Apple silicon)
-	- macOS (Intel)
+	- macOS (Intel) -->
 
 - Run the installer and follow the directions to install IntelliJ IDEA
 
@@ -55,7 +63,7 @@ TODO (prob brew or whatever the windows non cli equivalent is)
 - Navigate to the top middle of the screen, and find the menu options that say **Current File**. From here, we want to open the menu, navigate to **Client**, and click on the corresponding green *play* button in order to build and run the Gradle project. IntelliJ makes this fairly simple as you just need to click the button to do all this.
 
 <p align="left">
-  <img src="assets/intellij_run.png" width="450"><br>
+  <img src="assets/mac/mac_intellij_run.png" width="450"><br>
 </p>
 
 
