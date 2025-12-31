@@ -33,6 +33,7 @@ runs/
 bin/
 .DS_Store
 run
+.eclipse
 
 __pycache__
 
