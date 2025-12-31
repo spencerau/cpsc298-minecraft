@@ -35,5 +35,7 @@ bin/
 run
 .eclipse
 
+src/generated/
+
 __pycache__
 
