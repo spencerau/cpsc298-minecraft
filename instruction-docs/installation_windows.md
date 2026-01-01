@@ -28,7 +28,7 @@ When installing on Windows, you will need to make sure to select both **Update C
 - Use the [NeoForge Mod Generator](https://neoforged.net/mod-generator/) to create a template mod that you will import into IntelliJ.  
 <br>
 
-- We will be using Minecraft/NeoForge version 1.21.7 and the ModDevGradle Plugin
+- We will be using **Minecraft/NeoForge version 1.21.7** and the **ModDevGradle Plugin**
 <br>
 
 - If you wish to follow the same project and directory naming conventions as Jon, then:
@@ -64,16 +64,22 @@ When installing on Windows, you will need to make sure to select both **Update C
 
 ## Installing Java
 
-You may be prompted to install Java by IntelliJ in order to run Gradle. NeoForge will want JDK 21, so make sure to select that.
+You may be prompted to install Java by IntelliJ in order to run Gradle. NeoForge will want **JDK 21**, so make sure to select that.
 
 <p align="left">
   <img src="assets/windows/win_intellij_jdk21.png" width="350"><br>
 </p>
 
-In addition, you will need to install extensions to support .bat files in IntelliJ. Click on the `gradlew.bat` file, and follow the prompts and install both of these.
+In addition, you may need to install extensions to support .bat files in IntelliJ. Click on the `gradlew.bat` file, and you should get this prompt. Click on **Install Batch Scripts Support plugin**
 
 <p align="left">
-  <img src="assets/windows/win_intellij_bat_support.png" width="500"><br>
+  <img src="assets/windows/bat_plugin1.png" height="130"><br>
+</p>
+
+Which should pull up the install for the Batch Scripts Support Plugin. Install that in order to execute .bat files in IntelliJ.
+
+<p align="left">
+  <img src="assets/windows/bat_plugin2.png" width="400"><br>
 </p>
 
 Just to confirm that Gradle and IntelliJ are using the correct versions of JDK, we want to navigate to both **Settings** and **Project Structure**.
@@ -109,14 +115,22 @@ We want to check that both the **SDK** and **Language level** settings are point
 
 ## Building and Running
 
-To build, navigate to the `gradlew.bat` file, and then, in the top middle of the screen, find the menu options that say **Current File**. From here, we want to click on the corresponding green *play* button in order to build the Gradle project.
+To build and run, navigate to the top middle of the screen, and find the menu options that say **Current File**. From here, we want to open the menu, navigate to **Client**, and click on the corresponding green *play* button in order to build and run the Gradle project. IntelliJ makes this fairly simple as you just need to click the button to do all this.
 
 <p align="left">
+  <img src="assets/windows/win_build_run.png" height="300"><br>
+</p>
+
+If it builds properly, and launches Minecraft and lets you play, then congratulations, you have set it up correctly!
+<!-- 
+To build and run, navigate to the `gradlew.bat` file, and then, in the top middle of the screen, find the menu options that say **Current File**. From here, we want to click on the corresponding green *play* button in order to build the Gradle project. -->
+
+<!-- <p align="left">
   <img src="assets/windows/win_build.png" width="500"><br>
 </p>
 
 
-# ***NOTE***: seems like running `runClient` or `.\gradlew.bat runClient` is broken on my Windows device. need to fix this and update instructions according. Ss a result, this document is not finished.
+# ***NOTE***: seems like running `runClient` or `.\gradlew.bat runClient` is broken on my Windows device. need to fix this and update instructions according. Ss a result, this document is not finished. -->
 
 <!-- - Navigate to the top middle of the screen, and find the menu options that say **Current File**. From here, we want to open the menu, navigate to **Client**, and click on the corresponding green *play* button in order to build and run the Gradle project. IntelliJ makes this fairly simple as you just need to click the button to do all this.
 

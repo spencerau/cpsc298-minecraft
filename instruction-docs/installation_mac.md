@@ -26,7 +26,7 @@ TODO (prob brew or whatever the windows non cli equivalent is)
 - Use the [NeoForge Mod Generator](https://neoforged.net/mod-generator/) to create a template mod that you will import into IntelliJ.  
 <br>
 
-- We will be using Minecraft/NeoForge version 1.21.7 and the ModDevGradle Plugin
+- We will be using **Minecraft/NeoForge version 1.21.7** and the M**odDevGradle Plugin**
 <br>
 
 - If you wish to follow the same project and directory naming conventions as Jon, then:
