@@ -18,7 +18,6 @@ When installing on Windows, you will need to make sure to select both **Update C
   <img src="assets/windows/win_intellij_install.png" width="400"><br>
 </p>
 
-------------------------------------------------------------------------------------
 
 ## Creating a NeoForge Mod
 
@@ -44,7 +43,6 @@ All in all, if you are using the "default" settings, it should look like this:
 
 Then click *Download Mod Project* to download a zip of the NeoForge Mod. Unzip the generated mod file, and place it *somewhere*. For example, on MacOS, I renamed the folder to `cpsc298-minecraft-examplemod` and store it within `/Users/spencerau/Documents/GitHub`.
 
-------------------------------------------------------------------------------------
 
 ## Importing the Gradle Project
 
@@ -60,7 +58,6 @@ InteliJ will prompt you to *Trust and Open* the Project. Click *Trust Project* a
   <img src="assets/intellij_trust.png" width="450"><br>
 </p>
 
-------------------------------------------------------------------------------------
 
 ## Installing Java
 
@@ -112,7 +109,6 @@ We want to check that both the **SDK** and **Language level** settings are point
   <img src="assets/windows/win_intellij_projstructure2.png" width="550"><br>
 </p>
 
-------------------------------------------------------------------------------------
 
 ## Building and Running
 

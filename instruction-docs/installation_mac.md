@@ -4,7 +4,6 @@
 
 TODO (prob brew or whatever the windows non cli equivalent is)
 
-------------------------------------------------------------------------------------
 
 ## Installing IntelliJ IDEA
 
@@ -18,7 +17,6 @@ Download the appropriate installer for your device
 
 and run the installer and follow the directions to install IntelliJ IDEA
 
-------------------------------------------------------------------------------------
 
 ## Creating a NeoForge Mod
 
@@ -43,7 +41,6 @@ All in all, if you are using the "default" settings, it should look like this:
 
 Then click *Download Mod Project* to download a zip of the NeoForge Mod. Unzip the generated mod file, and place it *somewhere*. For example, on MacOS, I renamed the folder to `cpsc298-minecraft-examplemod` and store it within `/Users/spencerau/Documents/GitHub`.
 
-------------------------------------------------------------------------------------
 
 ## Importing the Gradle Project
 
@@ -59,7 +56,6 @@ InteliJ will prompt you to *Trust and Open* the Project. Click *Trust Project* a
   <img src="assets/intellij_trust.png" width="450"><br>
 </p>
 
-------------------------------------------------------------------------------------
 
 ## Building and Running
 
